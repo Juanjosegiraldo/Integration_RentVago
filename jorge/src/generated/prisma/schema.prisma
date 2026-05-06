@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  agent     Agent[]
+  createdAt DateTime @default(now())
+}
+
+model Agent {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  type        String
+  config      Json
+  isPublic    Boolean  @default(false)
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+// Fuentes de scraping (URLs desde donde sacamos arrendamientos)
+model ScrapingFuente {
+  id       Int      @id @default(autoincrement())
+  nombre   String
+  url      String   @unique
+  activo   Boolean  @default(true)
+  creadoEn DateTime @default(now())
+}
+
+// Arrendamientos guardados después del scraping
+model Arrendamiento {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  precio      Float
+  ubicacion   String?
+  descripcion String?
+  imagen      String?
+  urlFuente   String   @unique // evita duplicados
+  creadoEn    DateTime @default(now())
+}

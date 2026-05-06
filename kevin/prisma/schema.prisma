@@ -1,0 +1,110 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [uuid_ossp(map: "uuid-ossp", schema: "extensions"), vector]
+}
+
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum PropertyType {
+  CASA
+  APARTAMENTO
+}
+
+enum LeaseStatus {
+  ACTIVO
+  PENDIENTE
+  EXPIRADO
+}
+
+model User {
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  password        String
+  name            String?
+  role            UserRole       @default(USER)
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  ownedProperties Property[]     @relation("OwnerRelation")
+  leases          Lease[]        @relation("TenantRelation")
+  notifications   Notification[]
+  refreshTokens   RefreshToken[]
+}
+
+model Property {
+  id          Int          @id @default(autoincrement())
+  title       String
+  address     String
+  type        PropertyType @default(CASA)
+  price       Decimal      @db.Decimal(20, 2)
+  description String?
+  imageUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  ownerId     Int
+  owner       User         @relation("OwnerRelation", fields: [ownerId], references: [id])
+  leases      Lease[]
+}
+
+model Lease {
+  id          Int         @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime
+  monthlyRent Decimal     @db.Decimal(10, 2)
+  status      LeaseStatus @default(PENDIENTE)
+  createdAt   DateTime    @default(now())
+  propertyId  Int
+  property    Property    @relation(fields: [propertyId], references: [id])
+  tenantId    Int
+  tenant      User        @relation("TenantRelation", fields: [tenantId], references: [id])
+  payments    Payment[]
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  amount    Decimal  @db.Decimal(10, 2)
+  status    String   @default("pending")
+  leaseId   Int
+  createdAt DateTime @default(now())
+  lease     Lease    @relation(fields: [leaseId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  isRead    Boolean  @default(false)
+  userId    Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model SearchLog {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+}
+
+model Embedding {
+  id        Int                    @id @default(autoincrement())
+  content   String?
+  embedding Unsupported("vector")?
+
+  @@map("embeddings")
+}
