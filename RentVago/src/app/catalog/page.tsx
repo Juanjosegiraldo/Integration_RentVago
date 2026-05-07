@@ -98,9 +98,10 @@ export default async function CatalogPage({
             {properties.map((property) => {
               const imageUrl = property.images[0] ?? "";
               return (
-                <div
+                <Link
                   key={property.id}
-                  className="bg-black rounded-2xl border border-gray-800 overflow-hidden hover:border-gray-700 transition-colors"
+                  href={`/catalog/${property.id}`}
+                  className="bg-black rounded-2xl border border-gray-800 overflow-hidden hover:border-green-500/40 transition-colors block"
                 >
                   <div className="relative h-48 bg-gray-900">
                     {imageUrl ? (
@@ -137,7 +138,7 @@ export default async function CatalogPage({
                       <span className="text-gray-500 font-normal text-sm"> /mes</span>
                     </p>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

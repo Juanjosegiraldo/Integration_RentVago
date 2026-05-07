@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Home, Users, Globe, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Home, Users, Globe, ArrowLeft, FileText } from "lucide-react";
 import { AdminNavLink } from "./admin-nav-link";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +19,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </AdminNavLink>
           <AdminNavLink href="/admin/properties" icon={<Home className="w-5 h-5" />}>
             Propiedades
+          </AdminNavLink>
+          <AdminNavLink href="/admin/leases" icon={<FileText className="w-5 h-5" />}>
+            Arriendos
           </AdminNavLink>
           <AdminNavLink href="/admin/users" icon={<Users className="w-5 h-5" />}>
             Usuarios

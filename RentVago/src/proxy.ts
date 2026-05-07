@@ -7,7 +7,6 @@ import {
 import { AUTH_USER_ID_HEADER, AUTH_USER_ROLE_HEADER } from "@/lib/api-auth";
 import { verifyAccessToken } from "@/lib/jwt";
 import { authService } from "@/services/auth.service";
-import type { Role } from "@/generated/prisma/enums";
 import { errors as joseErrors } from "jose";
 import { NextRequest, NextResponse } from "next/server";
 

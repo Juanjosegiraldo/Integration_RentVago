@@ -19,8 +19,6 @@ interface RunResult {
   error?: string;
 }
 
-const inputCls =
-  "w-full rounded-2xl bg-gray-900 border border-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500";
 
 export function AdminScraperClient({ initialFuentes }: { initialFuentes: Fuente[] }) {
   const router = useRouter();
