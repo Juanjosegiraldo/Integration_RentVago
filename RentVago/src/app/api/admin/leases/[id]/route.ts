@@ -23,6 +23,15 @@ const leaseUpdateSchema = z
   .refine(
     (d) => Object.keys(d).length > 0,
     { message: "Se requiere al menos un campo para actualizar." },
+  )
+  .refine(
+    (d) => {
+      if (d.startDate && d.endDate) {
+        return new Date(d.endDate) > new Date(d.startDate);
+      }
+      return true;
+    },
+    { message: "La fecha de fin debe ser posterior a la fecha de inicio.", path: ["endDate"] },
   );
 
 export async function GET(
