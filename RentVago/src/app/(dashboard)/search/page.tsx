@@ -1,5 +1,6 @@
-import { PropertyGrid, SearchEmptyState } from "./search-page.components";
+import { PropertyGrid, SearchEmptyState, SearchLoadingSkeleton } from "./search-page.components";
 import { headers } from "next/headers";
+import { Suspense } from "react";
 import { resolveAuthenticatedUserFromHeaders } from "@/lib/api-auth";
 import { favoriteService } from "@/services/favorite.service";
 import { searchService, type PropertySearchFilters } from "@/services/search.service";
@@ -92,20 +93,22 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       : PAGE_SIZE;
 
   return (
-    <SearchPageClient
-      key={queryString || "default-search"}
-      initialFilters={initialState.filters}
-      currentPage={results.meta.page}
-      currentPageSize={currentPageSize}
-      meta={results.meta}
-      viewerRole={role}
-      pdfDownloadHref={buildPdfDownloadHref(initialState.filters)}
-    >
-      {results.data.length === 0 ? (
-        <SearchEmptyState />
-      ) : (
-        <PropertyGrid properties={results.data} favoritePropertyIds={favoritePropertyIds} />
-      )}
-    </SearchPageClient>
+    <Suspense fallback={<SearchLoadingSkeleton />}>
+      <SearchPageClient
+        key={queryString || "default-search"}
+        initialFilters={initialState.filters}
+        currentPage={results.meta.page}
+        currentPageSize={currentPageSize}
+        meta={results.meta}
+        viewerRole={role}
+        pdfDownloadHref={buildPdfDownloadHref(initialState.filters)}
+      >
+        {results.data.length === 0 ? (
+          <SearchEmptyState />
+        ) : (
+          <PropertyGrid properties={results.data} favoritePropertyIds={favoritePropertyIds} />
+        )}
+      </SearchPageClient>
+    </Suspense>
   );
 }

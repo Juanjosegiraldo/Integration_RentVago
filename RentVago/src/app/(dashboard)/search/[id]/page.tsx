@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/ui/favorite-button";
 import { resolveAuthenticatedUserFromHeaders } from "@/lib/api-auth";
 import { favoriteService } from "@/services/favorite.service";
@@ -28,22 +29,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     userId !== null ? await favoriteService.isPropertyFavorite(userId, id) : false;
 
   if (!property) {
-    return (
-      <div className="mx-auto w-full max-w-3xl rounded-3xl border border-gray-800 bg-black p-8 text-center shadow-sm">
-        <h1 className="text-2xl font-semibold tracking-tight text-white">
-          Propiedad no encontrada
-        </h1>
-        <p className="mt-2 text-sm text-gray-400">
-          No existe una propiedad asociada al identificador solicitado.
-        </p>
-        <Link
-          href="/search"
-          className="mt-6 inline-flex h-11 items-center rounded-2xl bg-green-500 px-5 text-sm font-extrabold text-black transition hover:bg-green-400"
-        >
-          Volver a la busqueda
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   const monthlyPrice = currencyFormat.format(Number(property.price));
